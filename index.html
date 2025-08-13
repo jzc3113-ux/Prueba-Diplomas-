@@ -32,16 +32,38 @@
 
     <div id="preview">
       <section id="diploma" class="diploma">
-        <img src="simbolo.svg" alt="Logo" class="logo">
-        <h2 class="title">Diploma</h2>
-        <p class="subtitle">Otorgado a</p>
-        <h3 id="nombre" class="name"></h3>
-        <p class="course">Por completar el curso <span id="curso"></span></p>
-        <p class="hours">Duración: <span id="horas"></span></p>
-        <p class="area">Área: <span id="area"></span></p>
-        <div class="footer">
-          <span id="firmante" class="firmante"></span>
-          <span id="fecha" class="fecha"></span>
+        <div class="left-bar">
+          <div class="left-text">
+            <span class="big">DIPLOMA</span>
+            <span class="small">De Participación</span>
+          </div>
+        </div>
+        <div class="top-logos">
+          <img src="PACIFICO SEGURO LOGO.png" alt="Pacífico Seguro" class="logo-pacifico">
+          <img src="sello crea+.PNG" alt="Crea+" class="logo-crea">
+        </div>
+        <div class="content">
+          <p class="intro">Crea+ felicita a:</p>
+          <div class="name-container">
+            <h3 id="nombre" class="name"></h3>
+            <div class="name-underline"></div>
+          </div>
+          <p class="taller-text">Por su participación en el taller <span id="taller"></span> facilitado por <span id="facilitador"></span>.</p>
+          <div class="signatures">
+            <div class="signature">
+              <img src="Firma diego.PNG" alt="Firma Diego" class="firma-img">
+              <div class="firma-line"></div>
+              <p class="firma-name">Diego [Nombre]</p>
+              <p class="firma-role">Cargo 1</p>
+            </div>
+            <div class="signature">
+              <img src="Firma 2.PNG" alt="Firma 2" class="firma-img">
+              <div class="firma-line"></div>
+              <p class="firma-name">Nombre 2</p>
+              <p class="firma-role">Cargo 2</p>
+            </div>
+          </div>
+          <p class="note">Este diploma es válido solo con la firma de los responsables y el sello de Crea+.</p>
         </div>
       </section>
     </div>
@@ -97,11 +119,8 @@ async function loadExcel(file){
     if(!nombre) return null;
     return {
       nombre:nombre,
-      curso:row['curso']||'—',
-      horas:row['horas']||'—',
-      area:row['area']||'—',
-      fecha:formatDate(row['fecha'])||'—',
-      firmante:row['firmante']||'—'
+      taller:row['taller']||'—',
+      facilitador:row['facilitador']||'—'
     };
   }).filter(Boolean);
   document.getElementById('count').textContent=participants.length;
@@ -112,26 +131,24 @@ async function loadExcel(file){
 }
 
 /**
- * Convierte fechas a DD/MM/AAAA si es posible.
- */
-function formatDate(value){
-  if(!value) return '';
-  const date=new Date(value);
-  if(!isNaN(date)) return date.toLocaleDateString('es-PE');
-  return value;
-}
-
-/**
  * Renderiza el diploma en pantalla.
  */
 function renderDiploma(data){
   if(!data) return;
-  document.getElementById('nombre').textContent=data.nombre;
-  document.getElementById('curso').textContent=data.curso;
-  document.getElementById('horas').textContent=data.horas;
-  document.getElementById('area').textContent=data.area;
-  document.getElementById('fecha').textContent=data.fecha;
-  document.getElementById('firmante').textContent=data.firmante;
+  const nameEl=document.getElementById('nombre');
+  nameEl.textContent=data.nombre.toUpperCase();
+  fitText(nameEl, document.querySelector('.name-underline').offsetWidth);
+  document.getElementById('taller').textContent=data.taller;
+  document.getElementById('facilitador').textContent=data.facilitador;
+}
+
+function fitText(el,width){
+  let size=60;
+  el.style.fontSize=size+'px';
+  while(el.scrollWidth>width && size>12){
+    size--;
+    el.style.fontSize=size+'px';
+  }
 }
 
 /**

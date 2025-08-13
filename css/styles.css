@@ -1,6 +1,8 @@
 :root {
   --bg: #FFE667;
-  --blue: #0C00C0;
+  --azul: #0C00C0;
+  --verde: #a8de73;
+  --franja: #1B2C98;
   --white: #FFFFFF;
 }
 
@@ -27,8 +29,8 @@ body {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  border: 1px solid var(--blue);
-  color: var(--blue);
+  border: 1px solid var(--azul);
+  color: var(--azul);
   margin-bottom: 0.5rem;
 }
 .file-input input {
@@ -41,7 +43,7 @@ body {
 }
 
 button {
-  background: var(--blue);
+  background: var(--azul);
   color: var(--white);
   border: none;
   border-radius: 4px;
@@ -62,52 +64,128 @@ button:hover {
   background: var(--white);
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
   margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.left-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45mm;
+  height: 100%;
+  background: var(--franja);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.left-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  color: var(--verde);
+  font-family: 'FF Nort Headline', sans-serif;
+}
+
+.left-text .big {
+  font-size: 32pt;
+  font-weight: bold;
+}
+
+.left-text .small {
+  font-size: 20pt;
+  font-style: italic;
+}
+
+.top-logos {
+  position: absolute;
+  top: 20mm;
+  right: 20mm;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.logo-pacifico {
+  width: 60mm;
+}
+
+.logo-crea {
+  width: 30mm;
+  margin-top: 5mm;
+}
+
+.content {
+  margin-left: 55mm;
   padding: 20mm;
   box-sizing: border-box;
-  position: relative;
+  text-align: center;
+  color: var(--azul);
 }
 
-.logo {
-  width: 60mm;
-  display: block;
-  margin: 0 auto 10mm;
-}
-
-.title {
-  font-family: 'FF Nort Headline', sans-serif;
-  color: var(--blue);
-  font-size: 32pt;
-  margin: 0 0 5mm;
-}
-
-.subtitle {
-  font-size: 14pt;
+.intro {
+  font-size: 16pt;
   margin: 0;
+}
+
+.name-container {
+  margin: 10mm auto;
+  width: 120mm;
 }
 
 .name {
   font-family: 'FF Nort Headline', sans-serif;
-  font-size: 28pt;
-  margin: 10mm 0;
+  color: var(--verde);
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 1.1;
 }
 
-.course, .hours, .area {
+.name-underline {
+  border-bottom: 2px solid var(--azul);
+  margin-top: 4mm;
+}
+
+.taller-text {
   font-size: 14pt;
-  margin: 3mm 0;
+  margin: 10mm auto;
+  width: 80%;
 }
 
-.footer {
-  position: absolute;
-  bottom: 20mm;
-  left: 0;
-  width: 100%;
+.signatures {
   display: flex;
-  justify-content: space-between;
-  font-size: 12pt;
+  justify-content: space-around;
+  margin-top: 20mm;
 }
-.firmante {
-  border-top: 1px solid #000;
-  padding-top: 2mm;
+
+.signature {
+  width: 40%;
+  text-align: center;
+  color: var(--azul);
+}
+
+.firma-img {
+  height: 30mm;
+}
+
+.firma-line {
+  border-bottom: 2px solid var(--azul);
+  margin: -5mm auto 4mm;
+}
+
+.firma-name {
+  font-weight: bold;
+  margin: 0;
+}
+
+.firma-role {
+  margin: 0;
+}
+
+.note {
+  font-size: 10pt;
+  margin-top: 20mm;
 }
 
 @media (max-width: 800px) {
