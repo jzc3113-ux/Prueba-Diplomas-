@@ -39,8 +39,8 @@
           </div>
         </div>
         <div class="top-logos">
-          <img src="PACIFICO SEGURO LOGO.png" alt="Pacífico Seguro" class="logo-pacifico">
-          <img src="sello crea+.PNG" alt="Crea+" class="logo-crea">
+          <img src="assets/pacifico-logo.png" alt="Pacífico Seguro" class="logo-pacifico">
+          <img src="assets/crea-simbolo.svg" alt="Crea+" class="logo-crea">
         </div>
         <div class="content">
           <p class="intro">Crea+ felicita a:</p>
@@ -48,23 +48,24 @@
             <h3 id="nombre" class="name"></h3>
             <div class="name-underline"></div>
           </div>
-          <p class="taller-text">Por su participación en el taller <span id="taller"></span> facilitado por <span id="facilitador"></span>.</p>
+          <p class="curso-text">Por su participación en el curso <span id="curso"></span> facilitado por <span id="facilitador"></span>.</p>
           <div class="signatures">
             <div class="signature">
-              <img src="Firma diego.PNG" alt="Firma Diego" class="firma-img">
+              <img src="assets/firma-diego.png" alt="Firma Diego" class="firma-img">
               <div class="firma-line"></div>
-              <p class="firma-name">Diego [Nombre]</p>
-              <p class="firma-role">Cargo 1</p>
+              <p class="firma-name">DIEGO CABRERA</p>
+              <p class="firma-role">Director de Cultura y Talento Humano</p>
             </div>
             <div class="signature">
-              <img src="Firma 2.PNG" alt="Firma 2" class="firma-img">
+              <img src="assets/firma-2.png" alt="Firma 2" class="firma-img">
               <div class="firma-line"></div>
-              <p class="firma-name">Nombre 2</p>
-              <p class="firma-role">Cargo 2</p>
+              <p class="firma-name">GABRIELA DENEGRI</p>
+              <p class="firma-role">Directora Ejecutiva</p>
             </div>
           </div>
           <p class="note">Este diploma es válido solo con la firma de los responsables y el sello de Crea+.</p>
-        </div>
+            <img src="assets/sello-crea.png" alt="Sello Crea+" class="sello">
+  </div>
       </section>
     </div>
   </main>
@@ -119,7 +120,7 @@ async function loadExcel(file){
     if(!nombre) return null;
     return {
       nombre:nombre,
-      taller:row['taller']||'—',
+      curso:row['curso']||'—',
       facilitador:row['facilitador']||'—'
     };
   }).filter(Boolean);
@@ -138,7 +139,7 @@ function renderDiploma(data){
   const nameEl=document.getElementById('nombre');
   nameEl.textContent=data.nombre.toUpperCase();
   fitText(nameEl, document.querySelector('.name-underline').offsetWidth);
-  document.getElementById('taller').textContent=data.taller;
+  document.getElementById('curso').textContent=data.curso;
   document.getElementById('facilitador').textContent=data.facilitador;
 }
 
@@ -158,8 +159,8 @@ async function downloadPDF(data){
   const diploma=document.getElementById('diploma');
   const canvas=await html2canvas(diploma,{scale:2});
   const img=canvas.toDataURL('image/png');
-  const pdf=new jspdf.jsPDF('p','mm','a4');
-  pdf.addImage(img,'PNG',0,0,210,297);
+  const pdf=new jspdf.jsPDF('l','mm','a4');
+  pdf.addImage(img,'PNG',0,0,297,210);
   pdf.save(`Diploma_${sanitize(data.nombre)}.pdf`);
 }
 

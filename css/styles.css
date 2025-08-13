@@ -2,7 +2,6 @@
   --bg: #FFE667;
   --azul: #0C00C0;
   --verde: #a8de73;
-  --franja: #1B2C98;
   --white: #FFFFFF;
 }
 
@@ -59,8 +58,8 @@ button:hover {
 }
 
 #diploma {
-  width: 210mm;
-  height: 297mm;
+  width: 297mm;
+  height: 210mm;
   background: var(--white);
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
   margin: 0 auto;
@@ -69,15 +68,27 @@ button:hover {
 }
 
 .left-bar {
+  overflow: hidden;
   position: absolute;
   top: 0;
   left: 0;
-  width: 45mm;
+  width: 60mm;
   height: 100%;
-  background: var(--franja);
+  background: var(--azul);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.left-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40mm;
+  background: url("../assets/pattern-left.png") no-repeat top center;
+  background-size: cover;
 }
 
 .left-text {
@@ -117,7 +128,7 @@ button:hover {
 }
 
 .content {
-  margin-left: 55mm;
+  margin-left: 70mm;
   padding: 20mm;
   box-sizing: border-box;
   text-align: center;
@@ -131,7 +142,7 @@ button:hover {
 
 .name-container {
   margin: 10mm auto;
-  width: 120mm;
+  width: 160mm;
 }
 
 .name {
@@ -147,7 +158,7 @@ button:hover {
   margin-top: 4mm;
 }
 
-.taller-text {
+.curso-text {
   font-size: 14pt;
   margin: 10mm auto;
   width: 80%;
@@ -181,6 +192,13 @@ button:hover {
 
 .firma-role {
   margin: 0;
+}
+
+.sello {
+  position: absolute;
+  bottom: 20mm;
+  right: 20mm;
+  width: 35mm;
 }
 
 .note {
