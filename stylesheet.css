@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'FF Nort Headline Condensed';
+    src: url('NortHeadline-Cond.eot');
+    src: local('FF Nort Headline Condensed'), local('NortHeadline-Cond'),
+        url('NortHeadline-Cond.eot?#iefix') format('embedded-opentype'),
+        url('NortHeadline-Cond.woff2') format('woff2'),
+        url('NortHeadline-Cond.woff') format('woff'),
+        url('NortHeadline-Cond.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Nort Headline';
+    src: url('NortHeadline-Regular.eot');
+    src: local('FF Nort Headline'), local('NortHeadline-Regular'),
+        url('NortHeadline-Regular.eot?#iefix') format('embedded-opentype'),
+        url('NortHeadline-Regular.woff2') format('woff2'),
+        url('NortHeadline-Regular.woff') format('woff'),
+        url('NortHeadline-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Nort Headline Semi Condensed';
+    src: url('NortHeadline-SemiCond.eot');
+    src: local('FF Nort Headline Semi Condensed'), local('NortHeadline-SemiCond'),
+        url('NortHeadline-SemiCond.eot?#iefix') format('embedded-opentype'),
+        url('NortHeadline-SemiCond.woff2') format('woff2'),
+        url('NortHeadline-SemiCond.woff') format('woff'),
+        url('NortHeadline-SemiCond.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
