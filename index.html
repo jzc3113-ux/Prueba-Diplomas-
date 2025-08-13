@@ -1,538 +1,168 @@
-               <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Diplomas Automático</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
-        
-        .diploma {
-            background: url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/91d9c8b6-8dc0-4772-a9e1-6c6a0b0fa6b0.png') no-repeat center center;
-            background-size: cover;
-            font-family: 'Playfair Display', serif;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        .diploma-content {
-            backdrop-filter: blur(2px);
-            background-color: rgba(248, 245, 232, 0.85);
-        }
-        
-        .seal {
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
-        }
-        
-        @media print {
-            .no-print {
-                display: none;
-            }
-            .diploma {
-                box-shadow: none;
-                page-break-after: always;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Diplomas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="fonts/ffnort/stylesheet.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="libError('xlsx')"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="libError('jsPDF')"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" onerror="libError('html2canvas')"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Generador Automático de Diplomas</h1>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Panel de Administración -->
-            <div class="bg-white p-6 rounded-lg shadow-md no-print">
-                <h2 class="text-xl font-semibold mb-4 text-gray-700">Administración de Diplomas</h2>
-                
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Plantilla de Diploma</label>
-                    <textarea id="template" class="w-full p-2 border rounded" rows="4">CERTIFICADO DE RECONOCIMIENTO
+<body>
+  <main class="container">
+    <h1>Generador de Diplomas</h1>
 
-Se otorga el presente diploma a:
-
-[NOMBRE_COMPLETO]
-
-Por haber completado satisfactoriamente el curso de [CURSO] con una duración de [DURACION] horas, demostrando excelencia en el área de [AREA].
-
-Fecha: [FECHA]
-Lugar: [LUGAR]
-                    
-Firmado: [FIRMANTE]
-Título: [TITULO_FIRMANTE]</textarea>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Fondo del Diploma (Imagen)</label>
-                    <input type="file" id="diploma-bg" accept="image/*" class="w-full p-2 border rounded">
-                    <button onclick="cambiarFondoDiploma()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        Cambiar Fondo
-                    </button>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Fondo del Diploma (Imagen)</label>
-                    <input type="file" id="diploma-bg" accept="image/*" class="w-full p-2 border rounded">
-                    <button onclick="cambiarFondoDiploma()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        Cambiar Fondo
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-gray-700 mb-2">Nombre del Participante</label>
-                        <input type="text" id="nombre" class="w-full p-2 border rounded" placeholder="Ej: María González">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Nombre del Curso</label>
-                        <input type="text" id="curso" class="w-full p-2 border rounded" placeholder="Ej: Marketing Digital">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Duración (horas)</label>
-                        <input type="text" id="duracion" class="w-full p-2 border rounded" placeholder="Ej: 120">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Área de Conocimiento</label>
-                        <input type="text" id="area" class="w-full p-2 border rounded" placeholder="Ej: Redes Sociales">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Fecha</label>
-                        <input type="date" id="fecha" class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Lugar</label>
-                        <input type="text" id="lugar" class="w-full p-2 border rounded" placeholder="Ej: Ciudad de México">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Firmante</label>
-                        <input type="text" id="firmante" class="w-full p-2 border rounded" placeholder="Ej: Dr. Roberto Jiménez">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-2">Título del Firmante</label>
-                        <input type="text" id="titulo_firmante" class="w-full p-2 border rounded" placeholder="Ej: Director Académico">
-                    </div>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Importar desde Excel</label>
-                    <input type="file" id="excel-file" accept=".xlsx, .xls, .csv" class="w-full p-2 border rounded mb-2">
-                    <button onclick="importarExcel()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        Importar Datos
-                    </button>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Importar desde Excel</label>
-                    <input type="file" id="excel-file" accept=".xlsx, .xls, .csv" class="w-full p-2 border rounded mb-2">
-                    <button onclick="importarExcel()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        Importar Datos
-                    </button>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="guardarDatos()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        Guardar Datos
-                    </button>
-                    <button onclick="generarDiploma()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-                        Generar Diploma
-                    </button>
-                    <button onclick="descargarDiploma()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
-                        Descargar PDF
-                    </button>
-                </div>
-                
-                <div class="mt-6">
-                    <h3 class="font-medium mb-2">Base de Datos de Participantes</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full border">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border p-2">Nombre</th>
-                                    <th class="border p-2">Curso</th>
-                                    <th class="border p-2">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="participantes-list">
-                                <!-- Datos se cargarán aquí -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Vista Previa del Diploma -->
-            <div class="flex justify-center">
-                <div id="diploma-container" class="diploma w-full max-w-lg h-[450px] p-8 rounded-lg relative overflow-hidden">
-                    <div class="diploma-content h-full p-6 flex flex-col items-center justify-center text-center">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6e0745c7-d825-4c15-bb00-e0d38e8f6e43.png" alt="Sello oficial circular dorado con diseño ornamental y texto 'Certificado' en el centro" class="seal mb-4 w-24 h-24">
-                        
-                        <h2 id="diploma-titulo" class="text-2xl font-bold mb-6 text-gray-800">CERTIFICADO DE RECONOCIMIENTO</h2>
-                        
-                        <p class="mb-8 text-gray-700">Se otorga el presente diploma a:</p>
-                        
-                        <h3 id="diploma-nombre" class="text-3xl font-bold mb-6 text-blue-800 border-b-2 border-blue-300 pb-2 px-6">Nombre Completo</h3>
-                        
-                        <div id="diploma-contenido" class="text-gray-700 mb-6">
-                            Por haber completado satisfactoriamente el curso de <span class="font-semibold">Nombre del Curso</span> con una duración de <span class="font-semibold">XX</span> horas, demostrando excelencia en el área de <span class="font-semibold">Área de Conocimiento</span>.
-                        </div>
-                        
-                        <div class="mt-auto w-full">
-                            <div class="flex justify-between text-sm">
-                                <div>
-                                    <p id="diploma-fecha" class="font-medium">Fecha: DD/MM/AAAA</p>
-                                    <p id="diploma-lugar" class="font-medium">Lugar: Ciudad</p>
-                                </div>
-                                <div class="text-right">
-                                    <p id="diploma-firmante" class="font-bold">Nombre Firmante</p>
-                                    <p id="diploma-titulo-firmante" class="text-xs">Título del Firmante</p>
-                                    <div class="mt-2 border-t-2 border-gray-400 pt-1">
-                                        <p class="text-xs">Firma</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="controls">
+      <label class="file-input">
+        <span>Seleccionar archivo Excel</span>
+        <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
+      </label>
+      <div class="info"><span id="count">0</span> participantes cargados</div>
+      <select id="row-select"></select>
+      <button id="preview-btn">Previsualizar</button>
+      <button id="pdf-btn">Generar PDF del seleccionado</button>
+      <button id="all-btn">Generar TODOS</button>
+      <div id="status" class="status"></div>
     </div>
 
-    <script>
-        // Inicializar la base de datos si no existe
-        if (!localStorage.getItem('diplomas')) {
-            localStorage.setItem('diplomas', JSON.stringify([]));
-        }
-        
-        // Cargar participantes al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarParticipantes();
-            
-            // Establecer fecha actual por defecto
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('fecha').value = today;
-        });
-        
-        function cargarParticipantes() {
-            const participantes = JSON.parse(localStorage.getItem('diplomas'));
-            const tableBody = document.getElementById('participantes-list');
-            tableBody.innerHTML = '';
-            
-            participantes.forEach((participante, index) => {
-                const row = document.createElement('tr');
-                row.className = 'border hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="border p-2">${participante.nombre}</td>
-                    <td class="border p-2">${participante.curso}</td>
-                    <td class="border p-2">
-                        <button onclick="cargarParaEditar(${index})" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
-                        <button onclick="eliminarParticipante(${index})" class="text-red-600 hover:text-red-800">Eliminar</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
-        function guardarDatos() {
-            const nombre = document.getElementById('nombre').value;
-            const curso = document.getElementById('curso').value;
-            const duracion = document.getElementById('duracion').value;
-            const area = document.getElementById('area').value;
-            const fecha = document.getElementById('fecha').value;
-            const lugar = document.getElementById('lugar').value;
-            const firmante = document.getElementById('firmante').value;
-            const titulo_firmante = document.getElementById('titulo_firmante').value;
-            const template = document.getElementById('template').value;
-            
-            if (!nombre || !curso || !duracion || !area || !fecha || !lugar || !firmante || !titulo_firmante) {
-                alert('Por favor complete todos los campos obligatorios.');
-                return;
-            }
-            
-            const participantes = JSON.parse(localStorage.getItem('diplomas'));
-            participantes.push({
-                nombre, curso, duracion, area, fecha, lugar, firmante, titulo_firmante, template
-            });
-            
-            localStorage.setItem('diplomas', JSON.stringify(participantes));
-            cargarParticipantes();
-            
-            // Limpiar campos (excepto template)
-            document.getElementById('nombre').value = '';
-            document.getElementById('curso').value = '';
-            document.getElementById('duracion').value = '';
-            document.getElementById('area').value = '';
-            document.getElementById('lugar').value = '';
-            document.getElementById('firmante').value = '';
-            document.getElementById('titulo_firmante').value = '';
-            
-            alert('Datos guardados correctamente.');
-        }
-        
-        function cargarParaEditar(index) {
-            const participantes = JSON.parse(localStorage.getItem('diplomas'));
-            const participante = participantes[index];
-            
-            document.getElementById('nombre').value = participante.nombre;
-            document.getElementById('curso').value = participante.curso;
-            document.getElementById('duracion').value = participante.duracion;
-            document.getElementById('area').value = participante.area;
-            document.getElementById('fecha').value = participante.fecha;
-            document.getElementById('lugar').value = participante.lugar;
-            document.getElementById('firmante').value = participante.firmante;
-            document.getElementById('titulo_firmante').value = participante.titulo_firmante;
-            document.getElementById('template').value = participante.template;
-            
-            // Eliminar el registro antiguo
-            eliminarParticipante(index, false);
-            
-            // Generar diploma automáticamente
-            generarDiploma();
-        }
-        
-        function eliminarParticipante(index, mostrarAlerta = true) {
-            const participantes = JSON.parse(localStorage.getItem('diplomas'));
-            participantes.splice(index, 1);
-            localStorage.setItem('diplomas', JSON.stringify(participantes));
-            cargarParticipantes();
-            
-            if (mostrarAlerta) {
-                alert('Participante eliminado correctamente.');
-            }
-        }
-        
-        function generarDiploma() {
-            const nombre = document.getElementById('nombre').value || 'Nombre Completo';
-            const curso = document.getElementById('curso').value || 'Nombre del Curso';
-            const duracion = document.getElementById('duracion').value || 'XX';
-            const area = document.getElementById('area').value || 'Área de Conocimiento';
-            const fechaInput = document.getElementById('fecha').value;
-            const lugar = document.getElementById('lugar').value || 'Ciudad';
-            const firmante = document.getElementById('firmante').value || 'Nombre Firmante';
-            const titulo_firmante = document.getElementById('titulo_firmante').value || 'Título del Firmante';
-            
-            // Formatear fecha
-            let fecha = 'DD/MM/AAAA';
-            if (fechaInput) {
-                const dateObj = new Date(fechaInput);
-                fecha = dateObj.toLocaleDateString('es-ES');
-            }
-            
-            // Actualizar vista previa
-            document.getElementById('diploma-nombre').textContent = nombre;
-            document.getElementById('diploma-contenido').innerHTML = `
-                Por haber completado satisfactoriamente el curso de <span class="font-semibold">${curso}</span> con una duración de <span class="font-semibold">${duracion}</span> horas, demostrando excelencia en el área de <span class="font-semibold">${area}</span>.
-            `;
-            document.getElementById('diploma-fecha').textContent = `Fecha: ${fecha}`;
-            document.getElementById('diploma-lugar').textContent = `Lugar: ${lugar}`;
-            document.getElementById('diploma-firmante').textContent = firmante;
-            document.getElementById('diploma-titulo-firmante').textContent = titulo_firmante;
-            
-            // Si hay template personalizado, procesar variables
-            const template = document.getElementById('template').value;
-            if (template) {
-                let diplomaText = template
-                    .replace(/\[NOMBRE_COMPLETO\]/g, nombre)
-                    .replace(/\[CURSO\]/g, curso)
-                    .replace(/\[DURACION\]/g, duracion)
-                    .replace(/\[AREA\]/g, area)
-                    .replace(/\[FECHA\]/g, fecha)
-                    .replace(/\[LUGAR\]/g, lugar)
-                    .replace(/\[FIRMANTE\]/g, firmante)
-                    .replace(/\[TITULO_FIRMANTE\]/g, titulo_firmante);
-                
-                // Dividir en líneas para formato personalizado
-                const lines = diplomaText.split('\n').filter(line => line.trim() !== '');
-                
-                let diplomaHTML = '';
-                lines.forEach(line => {
-                    if (line === nombre) {
-                        diplomaHTML += `<h3 class="text-3xl font-bold mb-6 text-blue-800 border-b-2 border-blue-300 pb-2 px-6">${line}</h3>`;
-                    } else if (line.includes('CERTIFICADO') || line.includes('DIPLOMA')) {
-                        diplomaHTML += `<h2 class="text-2xl font-bold mb-6 text-gray-800">${line}</h2>`;
-                    } else {
-                        diplomaHTML += `<p class="mb-2">${line}</p>`;
-                    }
-                });
-                
-                document.getElementById('diploma-contenido').innerHTML = diplomaHTML;
-            }
-        }
-        
-        async function descargarDiploma() {
-            if (!document.getElementById('nombre').value) {
-                alert('Por favor complete al menos el nombre del participante antes de generar el diploma.');
-                return;
-            }
-            
-            // Generar el diploma primero para asegurar que esté actualizado
-            generarDiploma();
-            
-            const { jsPDF } = window.jspdf;
-            const diplomaElement = document.getElementById('diploma-container');
-            
-            // Ajustar tamaño para impresión
-            diplomaElement.style.width = '800px';
-            diplomaElement.style.height = '600px';
-            
-            // Usar html2canvas para capturar el diploma
-            const canvas = await html2canvas(diplomaElement, {
-                scale: 2,
-                logging: false,
-                useCORS: true,
-                allowTaint: true
-            });
-            
-            // Crear PDF
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('landscape');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            
-            // Descargar PDF
-            const nombreParticipante = document.getElementById('nombre').value || 'diploma';
-            pdf.save(`Diploma_${nombreParticipante.replace(/\s+/g, '_')}.pdf`);
-            
-            // Restaurar tamaño original
-            diplomaElement.style.width = '';
-            diplomaElement.style.height = '';
-        }
-        
-        // Manejar el evento de impresión para ajustar el diploma
-        window.addEventListener('beforeprint', () => {
-            document.getElementById('diploma-container').style.width = '800px';
-            document.getElementById('diploma-container').style.height = '600px';
-        });
-        
-        window.addEventListener('afterprint', () => {
-            document.getElementById('diploma-container').style.width = '';
-            document.getElementById('diploma-container').style.height = '';
-        });
+    <div id="preview">
+      <section id="diploma" class="diploma">
+        <img src="simbolo.svg" alt="Logo" class="logo">
+        <h2 class="title">Diploma</h2>
+        <p class="subtitle">Otorgado a</p>
+        <h3 id="nombre" class="name"></h3>
+        <p class="course">Por completar el curso <span id="curso"></span></p>
+        <p class="hours">Duración: <span id="horas"></span></p>
+        <p class="area">Área: <span id="area"></span></p>
+        <div class="footer">
+          <span id="firmante" class="firmante"></span>
+          <span id="fecha" class="fecha"></span>
+        </div>
+      </section>
+    </div>
+  </main>
 
-        function importarExcel() {
-            const file = document.getElementById('excel-file').files[0];
-            if (!file) {
-                alert('Por favor seleccione un archivo Excel');
-                return;
-            }
+<script>
+function libError(name){
+  document.getElementById('status').textContent = 'No se pudo cargar '+name+'. Revisa tu conexión a Internet.';
+}
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+let participants=[];
+let selectedIndex=0;
 
-                if (jsonData.length === 0) {
-                    alert('El archivo Excel no contiene datos válidos');
-                    return;
-                }
+document.getElementById('file-input').addEventListener('change', e=>loadExcel(e.target.files[0]));
+document.getElementById('preview-btn').addEventListener('click',()=>{
+  selectedIndex = parseInt(document.getElementById('row-select').value)||0;
+  renderDiploma(participants[selectedIndex]);
+});
+document.getElementById('pdf-btn').addEventListener('click',()=>{
+  const data = participants[selectedIndex];
+  if(data) downloadPDF(data);
+});
+document.getElementById('all-btn').addEventListener('click', downloadAll);
 
-                // Limpiar base de datos existente
-                localStorage.setItem('diplomas', JSON.stringify([]));
+/**
+ * Lee el archivo Excel y carga los participantes.
+ */
+async function loadExcel(file){
+  if(!file){return;}
+  if(file.size > 10*1024*1024){
+    alert('El archivo supera 10MB');
+    return;
+  }
+  const data = await file.arrayBuffer();
+  const workbook = XLSX.read(data,{type:'array'});
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(sheet,{defval:''});
+  if(!rows.length){
+    alert('El archivo Excel no contiene datos válidos');
+    return;
+  }
+  const firstRow = rows[0];
+  const map={};
+  Object.keys(firstRow).forEach(k=>{map[k.toLowerCase()]=k;});
+  if(!map['nombre']){
+    alert('La columna "Nombre" es obligatoria');
+    return;
+  }
+  participants = rows.map(r=>{
+    const row={};
+    for(const key in r){row[key.toLowerCase()] = r[key];}
+    const nombre=row['nombre'];
+    if(!nombre) return null;
+    return {
+      nombre:nombre,
+      curso:row['curso']||'—',
+      horas:row['horas']||'—',
+      area:row['area']||'—',
+      fecha:formatDate(row['fecha'])||'—',
+      firmante:row['firmante']||'—'
+    };
+  }).filter(Boolean);
+  document.getElementById('count').textContent=participants.length;
+  const select=document.getElementById('row-select');
+  select.innerHTML=participants.map((p,i)=>`<option value="${i}">${i+1} - ${p.nombre}</option>`).join('');
+  selectedIndex=0;
+  renderDiploma(participants[0]);
+}
 
-                // Procesar cada fila del Excel
-                jsonData.forEach(row => {
-                    const participante = {
-                        nombre: row['Nombre'] || '',
-                        curso: row['Curso'] || '',
-                        duracion: row['Duración'] || '',
-                        area: row['Área'] || '',
-                        fecha: row['Fecha'] || new Date().toISOString().split('T')[0],
-                        lugar: row['Lugar'] || '',
-                        firmante: row['Firmante'] || '',
-                        titulo_firmante: row['Título Firmante'] || '',
-                        template: document.getElementById('template').value
-                    };
-                    
-                    const participantes = JSON.parse(localStorage.getItem('diplomas'));
-                    participantes.push(participante);
-                    localStorage.setItem('diplomas', JSON.stringify(participantes));
-                });
+/**
+ * Convierte fechas a DD/MM/AAAA si es posible.
+ */
+function formatDate(value){
+  if(!value) return '';
+  const date=new Date(value);
+  if(!isNaN(date)) return date.toLocaleDateString('es-PE');
+  return value;
+}
 
-                cargarParticipantes();
-                alert(`Se importaron ${jsonData.length} registros correctamente`);
-            };
-            reader.readAsArrayBuffer(file);
-        }
+/**
+ * Renderiza el diploma en pantalla.
+ */
+function renderDiploma(data){
+  if(!data) return;
+  document.getElementById('nombre').textContent=data.nombre;
+  document.getElementById('curso').textContent=data.curso;
+  document.getElementById('horas').textContent=data.horas;
+  document.getElementById('area').textContent=data.area;
+  document.getElementById('fecha').textContent=data.fecha;
+  document.getElementById('firmante').textContent=data.firmante;
+}
 
-        function cambiarFondoDiploma() {
-            const file = document.getElementById('diploma-bg').files[0];
-            if (!file) {
-                alert('Por favor seleccione una imagen');
-                return;
-            }
+/**
+ * Genera un PDF del diploma visible.
+ */
+async function downloadPDF(data){
+  const diploma=document.getElementById('diploma');
+  const canvas=await html2canvas(diploma,{scale:2});
+  const img=canvas.toDataURL('image/png');
+  const pdf=new jspdf.jsPDF('p','mm','a4');
+  pdf.addImage(img,'PNG',0,0,210,297);
+  pdf.save(`Diploma_${sanitize(data.nombre)}.pdf`);
+}
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const diplomaContainer = document.getElementById('diploma-container');
-                diplomaContainer.style.backgroundImage = `url('${e.target.result}')`;
-            };
-            reader.readAsDataURL(file);
-        }
+/**
+ * Genera PDFs de todos los participantes.
+ */
+async function downloadAll(){
+  for(let i=0;i<participants.length;i++){
+    renderDiploma(participants[i]);
+    await new Promise(r=>setTimeout(r,100));
+    await downloadPDF(participants[i]);
+  }
+}
 
-        function importarExcel() {
-            const file = document.getElementById('excel-file').files[0];
-            if (!file) {
-                alert('Por favor seleccione un archivo Excel');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-                if (jsonData.length === 0) {
-                    alert('El archivo Excel no contiene datos válidos');
-                    return;
-                }
-
-                // Limpiar base de datos existente
-                localStorage.setItem('diplomas', JSON.stringify([]));
-
-                // Procesar cada fila del Excel
-                jsonData.forEach(row => {
-                    const participante = {
-                        nombre: row['Nombre'] || '',
-                        curso: row['Curso'] || '',
-                        duracion: row['Duración'] || '',
-                        area: row['Área'] || '',
-                        fecha: row['Fecha'] || new Date().toISOString().split('T')[0],
-                        lugar: row['Lugar'] || '',
-                        firmante: row['Firmante'] || '',
-                        titulo_firmante: row['Título Firmante'] || '',
-                        template: document.getElementById('template').value
-                    };
-                    
-                    const participantes = JSON.parse(localStorage.getItem('diplomas'));
-                    participantes.push(participante);
-                    localStorage.setItem('diplomas', JSON.stringify(participantes));
-                });
-
-                cargarParticipantes();
-                alert(`Se importaron ${jsonData.length} registros correctamente`);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function cambiarFondoDiploma() {
-            const file = document.getElementById('diploma-bg').files[0];
-            if (!file) {
-                alert('Por favor seleccione una imagen');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const diplomaContainer = document.getElementById('diploma-container');
-                diplomaContainer.style.backgroundImage = `url('${e.target.result}')`;
-            };
-            reader.readAsDataURL(file);
-        }
-    </script>
+/**
+ * Limpia nombres de archivo.
+ */
+function sanitize(str){
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_]/g,'');
+}
+</script>
 </body>
 </html>
-
